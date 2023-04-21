@@ -74,24 +74,9 @@ function Pool(script, options) {
  *   // call a function available on the worker
  *   pool.exec('fibonacci', [6])
  *
- *   // offload a function
- *   function add(a, b) {
- *     return a + b
- *   };
- *   pool.exec(add, [2, 4])
- *       .then(function (result) {
- *         console.log(result); // outputs 6
- *       })
- *       .catch(function(error) {
- *         console.log(error);
- *       });
- *
- * @param {String | Function} method  Function name or function.
- *                                    If `method` is a string, the corresponding
- *                                    method on the worker will be executed
- *                                    If `method` is a Function, the function
- *                                    will be stringified and executed via the
- *                                    workers built-in function `run(fn, args)`.
+ * @param {String} method  Function name.
+*                          If `method` is a string, the corresponding
+*                          method on the worker will be executed.
  * @param {Array} [params]  Function arguments applied when calling the function
  * @param {ExecOptions} [options]  Options object
  * @return {Promise.<*, Error>} result
@@ -141,11 +126,10 @@ Pool.prototype.exec = function (method, params, options) {
     return resolver.promise;
   }
   else if (typeof method === 'function') {
-    // send stringified function and function arguments to worker
-    return this.exec('run', [String(method), params]);
+    throw new Error("Passing a function has been disabled for security (CSP) reasons."); 
   }
   else {
-    throw new TypeError('Function or string expected as argument "method"');
+    throw new TypeError('String expected as argument "method"');
   }
 };
 
